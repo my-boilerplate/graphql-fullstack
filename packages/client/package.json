@@ -1,0 +1,7 @@
+{
+  "name": "@graphql-fullstack/client",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "main.ts",
+  "devDependencies": {}
+}

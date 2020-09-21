@@ -1,0 +1,13 @@
+{
+  "name": "@graphql-fullstack/server",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p . && ncp src/schema dist/schema",
+    "build:dev": "nodemon src/server.ts --exec ts-node src/server.ts -e ts,graphql",
+    "start": "node 'dist/server.js'",
+    "start:dev": "npm run build:dev"
+  },
+  "devDependencies": {}
+}
