@@ -37,14 +37,6 @@ const rendererConfig = {
   entry: path.resolve(rootPath, 'web', 'src', 'index.tsx'),
   target: 'electron-renderer',
   devtool: 'source-map',
-  devServer: {
-    contentBase: path.join(rootDir, 'dist', 'client', 'renderer'),
-    historyApiFallback: true,
-    compress: true,
-    hot: true,
-    port: 4000,
-    publicPath: '/'
-  },
   output: {
     path: path.resolve(rootDir, 'dist', 'client', 'renderer'),
     filename: 'js/[name].js',

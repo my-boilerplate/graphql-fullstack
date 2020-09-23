@@ -20,7 +20,7 @@ module.exports = merge(common, {
   devServer: {
     hot: true,
     inline: true,
-    port: 4000
+    port: 3000
   },
   plugins: [
     new HtmlWebpackPlugin({

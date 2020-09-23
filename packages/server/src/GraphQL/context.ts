@@ -1,15 +1,22 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
+import { environment as env } from '../../../../environment'
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: env.server?.prisma.url
+    }
+  }
+})
 
-export interface ExpressContext {
+export interface Context {
   req: express.Request;
   res: express.Response;
   prisma: PrismaClient;
 }
 
-const context = ({ req, res }: ExpressContext): ExpressContext => {
+const context = ({ req, res }: Context): Context => {
   return { req, res, prisma }
 }
 
