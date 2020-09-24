@@ -7,23 +7,19 @@ const typeDefs = gql`
     idJuridica: Juridica
   }
 
-  type Fisica{
+  type Fisica {
     id: Int!
     nome: String!
     cpf: String!
-    aniversario: Date!
+    aniversario: DateTime!
     mae: String!
   }
 
-  type Juridica{
+  type Juridica {
     id: Int!
     nome: String!
     cnpj: String!
     fantasia: String
-  }
-
-  type Query {
-
   }
 `
 

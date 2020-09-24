@@ -10,14 +10,17 @@ const prisma = new PrismaClient({
   }
 })
 
+const secret = String(env.server?.authentication?.secret)
+
 export interface Context {
   req: express.Request;
   res: express.Response;
   prisma: PrismaClient;
+  secret: string;
 }
 
 const context = ({ req, res }: Context): Context => {
-  return { req, res, prisma }
+  return { req, res, prisma, secret }
 }
 
 export default context

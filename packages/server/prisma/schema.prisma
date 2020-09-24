@@ -10,68 +10,74 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Apps Config
-model Programa {
-  id   Int    @default(autoincrement()) @id
-  nome String
-  Tela Tela[]
+// Config Aplicativos
+model Programas {
+  id    Int     @default(autoincrement()) @id
+  nome  String
+  Telas Telas[]
 }
 
-model Tela {
-  id            Int             @default(autoincrement()) @id
-  idPrograma    Int
-  Programa      Programa        @relation(fields: [idPrograma])
-  nome          String
-  tipo          Int
-  rota          String
-  AcessoUsuario AcessoUsuario[]
+model Telas {
+  id                     Int                      @default(autoincrement()) @id
+  idProgramas            Int
+  nome                   String
+  tipo                   Int
+  rota                   String
+  Programas              Programas                @relation(fields: [idProgramas])
+  AcessoGrupoPermissao   AcessoGrupoPermissao[]
+  AcessoUsuarioPermissao AcessoUsuarioPermissao[]
 }
 
-// Auth Config
+// Config Autenticação
 model Usuario {
-  id               Int                @default(autoincrement()) @id
-  email            String             @unique
-  nome             String?
-  usuario          String             @unique
-  senha            String
-  idPessoa         Int?
-  Pessoa           Pessoa?            @relation(fields: [idPessoa])
-  HelpDeskTickets  Chamados[]
-  Atribuido        Chamados[]         @relation("Atribuido")
-  UsuarioPermissao UsuarioPermissao[]
-  Problemas        Problemas[]
-  Mudancas         Mudancas[]
+  id                     Int                      @default(autoincrement()) @id
+  email                  String                   @unique
+  nome                   String?
+  usuario                String                   @unique
+  senha                  String
+  idPessoa               Int?
+  GrupoPermissao         GrupoPermissao[]         @relation("UsuarioGrupoPermissao")
+  Pessoa                 Pessoa?                  @relation(fields: [idPessoa])
+  Tarefas                Tarefas[]
+  Revisor                Tarefas[]                @relation("Revisor")
+  Atribuido              Tarefas[]                @relation("Atribuido")
+  AcessoUsuarioPermissao AcessoUsuarioPermissao[]
 }
 
-model Permissao {
-  id               Int                @default(autoincrement()) @id
-  nome             String
-  UsuarioPermissao UsuarioPermissao[]
-  AcessoUsuario    AcessoUsuario[]
+model GrupoPermissao {
+  id                   Int                    @default(autoincrement()) @id
+  nome                 String
+  AcessoGrupoPermissao AcessoGrupoPermissao[]
+  Usuario              Usuario[]              @relation("UsuarioGrupoPermissao")
 }
 
-model UsuarioPermissao {
-  id          Int       @default(autoincrement()) @id
-  idUsuario   Int
-  idPermissao Int
-  Usuario     Usuario   @relation(fields: [idUsuario])
-  Permissao   Permissao @relation(fields: [idPermissao])
+model AcessoGrupoPermissao {
+  id               Int            @default(autoincrement()) @id
+  idTelas          Int
+  idGrupoPermissao Int
+  isMenu           Boolean?       @default(false)
+  isAcesso         Boolean?       @default(false)
+  isSalvar         Boolean?       @default(false)
+  isEditar         Boolean?       @default(false)
+  isDeletar        Boolean?       @default(false)
+  Telas            Telas          @relation(fields: [idTelas])
+  GrupoPermissao   GrupoPermissao @relation(fields: [idGrupoPermissao])
 }
 
-model AcessoUsuario {
-  id          Int       @default(autoincrement()) @id
-  idTela      Int
-  idPermissao Int
-  isMenu      Boolean
-  isAcesso    Boolean
-  isSalvar    Boolean
-  isEditar    Boolean
-  isDeletar   Boolean
-  Tela        Tela      @relation(fields: [idTela])
-  Permissao   Permissao @relation(fields: [idPermissao])
+model AcessoUsuarioPermissao {
+  id        Int     @default(autoincrement()) @id
+  idTelas   Int
+  idUsuario Int
+  isMenu    Boolean
+  isAcesso  Boolean
+  isSalvar  Boolean
+  isEditar  Boolean
+  isDeletar Boolean
+  Telas     Telas   @relation(fields: [idTelas])
+  Usuario   Usuario @relation(fields: [idUsuario])
 }
 
-// General
+// Geral
 model Pessoa {
   id         Int       @default(autoincrement()) @id
   idFisica   Int
@@ -111,53 +117,24 @@ model Endereco {
 }
 
 // App HelpDesk
-model Chamados {
-  id         Int          @default(autoincrement()) @id
-  autor      Int
-  abertura   DateTime     @default(now())
-  tipo       Int
-  estado     Int?
-  prioridade Int?
-  titulo     String
-  descricao  String?
-  Autor      Usuario      @relation(fields: [autor])
-  Atribuido  Usuario[]    @relation("Atribuido")
-  Etiquetas  Categorias[] @relation("Etiquetas")
-  Problemas  Problemas[]  @relation("ChamadosProblemas")
-}
-
-model Problemas {
-  id            Int             @default(autoincrement()) @id
-  autor         Int
-  abertura      DateTime        @default(now())
-  tipo          Int
-  estado        Int?
-  prioridade    Int?
-  titulo        String
-  descricao     String?
-  Autor         Usuario         @relation(fields: [autor])
-  Atribuido     Usuario[]       @relation("Atribuido")
-  Etiquetas     Categorias[]    @relation("Etiquetas")
-  Mudancas      Mudancas[]      @relation("ProblemasMudancas")
-  ListaControle ListaControle[]
-  Chamados      Chamados?       @relation("ChamadosProblemas", fields: [chamadosId], references: [id])
-  chamadosId    Int?
-}
-
-model Mudancas {
-  id            Int             @default(autoincrement()) @id
-  autor         Int
-  abertura      DateTime        @default(now())
-  tipo          Int
-  estado        Int?
-  prioridade    Int?
-  titulo        String
-  descricao     String?
-  Autor         Usuario         @relation(fields: [autor])
-  Atribuido     Usuario[]       @relation("Atribuido")
-  Etiquetas     Categorias[]    @relation("Etiquetas")
-  Problemas     Problemas[]     @relation("ProblemasMudancas")
-  ListaControle ListaControle[]
+model Tarefas {
+  id               Int            @default(autoincrement()) @id
+  autor            Int
+  abertura         DateTime       @default(now())
+  classe           Int // Chamado, Problema, Mudança
+  tipo             Int? // Requisição, Incidente
+  estado           Int?
+  prioridade       Int?
+  titulo           String
+  descricao        String?
+  RelacionadoPai   Tarefas[]      @relation("TarefasRelacionadas")
+  RelacionadoFilho Tarefas[]      @relation("TarefasRelacionadas")
+  Autor            Usuario        @relation(fields: [autor])
+  Atribuido        Usuario[]      @relation("Atribuido")
+  Etiquetas        Categorias[]   @relation("Etiquetas")
+  Revisor          Usuario[]      @relation("Revisor")
+  Checklist        Checklist[]
+  CartaoColuna     CartaoColuna[]
 }
 
 model Categorias {
@@ -168,25 +145,48 @@ model Categorias {
   categoriaPai   Int?
   CategoriaPai   Categorias?  @relation("CategoriaPai", fields: [categoriaPai], references: [id])
   CategoriaFilho Categorias[] @relation("CategoriaPai")
-  Chamados       Chamados[]   @relation("Etiquetas")
-  Problemas      Problemas[]  @relation("Etiquetas")
-  Mudancas       Mudancas[]   @relation("Etiquetas")
+  Tarefas        Tarefas[]    @relation("Etiquetas")
 }
 
-model ListaControle {
-  id                Int                 @default(autoincrement()) @id
-  idProblemas       Int?
-  idMudancas        Int?
-  Problemas         Problemas?          @relation(fields: [idProblemas])
-  Mudancas          Mudancas?           @relation(fields: [idMudancas])
-  ListaControleItem ListaControleItem[]
+model Checklist {
+  id            Int             @default(autoincrement()) @id
+  idTarefas     Int
+  titulo        String
+  descricao     String?
+  Tarefas       Tarefas         @relation(fields: [idTarefas])
+  ChecklistItem ChecklistItem[]
 }
 
-model ListaControleItem {
-  id              Int           @default(autoincrement()) @id
-  idListaControle Int
-  ListaControle   ListaControle @relation(fields: [idListaControle])
-  nome            String
-  descricao       String?
-  isFechado       Boolean       @default(false)
+model ChecklistItem {
+  id          Int       @default(autoincrement()) @id
+  idChecklist Int
+  Checklist   Checklist @relation(fields: [idChecklist])
+  nome        String
+  descricao   String?
+  isFechado   Boolean   @default(false)
+}
+
+// App Kanban
+model Quadro {
+  id        Int     @default(autoincrement()) @id
+  nome      String
+  descricao String?
+}
+
+model ColunaQuadro {
+  id           Int            @default(autoincrement()) @id
+  idQuadro     Int
+  nome         String
+  descricao    String
+  CartaoColuna CartaoColuna[]
+}
+
+model CartaoColuna {
+  id             Int          @default(autoincrement()) @id
+  idColunaQuadro Int
+  idTarefas      Int?
+  titulo         String?
+  descricao      String?
+  Tarefas        Tarefas?     @relation(fields: [idTarefas])
+  ColunaQuadro   ColunaQuadro @relation(fields: [idColunaQuadro])
 }

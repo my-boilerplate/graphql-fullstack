@@ -1,21 +1,24 @@
 import { GraphQLScalarType } from 'graphql'
-import { Kind } from 'graphql/language'
+import { IResolvers } from 'apollo-server-express'
+import { Kind, ValueNode } from 'graphql/language'
 
-export const resolverMap = {
-  Date: new GraphQLScalarType({
-    name: 'Date',
+const resolvers: IResolvers = {
+  DateTime: new GraphQLScalarType({
+    name: 'DateTime',
     description: 'Date custom scalar type',
-    parseValue(value) {
+    parseValue(value: Date): Date {
       return new Date(value) // value from the client
     },
-    serialize(value) {
+    serialize(value: Date): number {
       return value.getTime() // value sent to the client
     },
-    parseLiteral(ast) {
+    parseLiteral(ast: ValueNode): Date | null {
       if (ast.kind === Kind.INT) {
-        return parseInt(ast.value, 10) // ast value is always in string format
+        return new Date(ast.value) // ast value is always in string format
       }
       return null
     }
   })
 }
+
+export default resolvers

@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 const typeDefs = gql`
-  scalar Date
+  scalar DateTime
 `
 
 export default typeDefs

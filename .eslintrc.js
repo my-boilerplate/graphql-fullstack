@@ -31,7 +31,8 @@ module.exports = {
     'space-before-function-paren': [
       'error',
       { anonymous: 'always', named: 'never', asyncArrow: 'always' }
-    ]
+    ],
+    '@typescript-eslint/no-explicit-any': 0
   },
   settings: {
     'import/resolver': {
